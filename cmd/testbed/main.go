@@ -33,7 +33,12 @@ func main() {
 			break
 		}
 		line = strings.TrimSpace(line)
-		err = r.HandleCommand(fourthbot.Command(line))
+		c, err := fourthbot.ParseCommand(line)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		err = r.HandleCommand(c)
 		if err != nil {
 			fmt.Println(err)
 		}

@@ -4,6 +4,8 @@ import (
 	"github.com/fourth/fourthbot"
 )
 
+// RegisterAll is a convenience function for registering all the mock
+// and test Responders with a Robot
 func RegisterAll(r *fourthbot.Robot) {
-	r.RegisterResponder(fourthbot.Command("/echo"), Echo{})
+	r.RegisterResponder("/echo", Echo{})
 }

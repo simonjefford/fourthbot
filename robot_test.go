@@ -3,10 +3,10 @@ package fourthbot
 import "testing"
 
 func TestCommandHandling(t *testing.T) {
-	c := Command("deploy")
+	c, _ := ParseCommand("/deploy")
 	r := NewRobot()
 	dispatched := false
-	r.RegisterResponder(c, ResponderFunc(func(c Command) {
+	r.RegisterResponder("/deploy", ResponderFunc(func(c *Command) {
 		dispatched = true
 	}))
 	err := r.HandleCommand(c)
@@ -17,7 +17,8 @@ func TestCommandHandling(t *testing.T) {
 		t.Fatal("Command was not dispatched")
 	}
 
-	err = r.HandleCommand(Command("not registered"))
+	c, _ = ParseCommand("/does not exist")
+	err = r.HandleCommand(c)
 	if err != ErrUnknownCommand {
 		t.Fatal("Expected ErrUnknownCommand, got", err)
 	}
