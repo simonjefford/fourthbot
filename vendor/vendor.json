@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "W8u2CU4ugn/coTPO0pLrcX6sbX8=",
+			"path": "github.com/chzyer/readline",
+			"revision": "31ab3eee0c7232dcb9abeb3876ca2739df53872d",
+			"revisionTime": "2016-09-04T13:05:21Z"
+		}
+	],
+	"rootPath": "github.com/fourth/fourthbot"
+}
