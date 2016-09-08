@@ -3,7 +3,7 @@ package responders
 import (
 	"fmt"
 
-	"github.com/fourth/fourthbot"
+	"github.com/simonjefford/fourthbot"
 )
 
 // Echo is a test type intended for unit tests and adhoc testing with

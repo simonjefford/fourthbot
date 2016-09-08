@@ -1,7 +1,7 @@
 package responders
 
 import (
-	"github.com/fourth/fourthbot"
+	"github.com/simonjefford/fourthbot"
 )
 
 // RegisterAll is a convenience function for registering all the mock

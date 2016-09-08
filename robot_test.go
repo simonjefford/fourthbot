@@ -3,7 +3,7 @@ package fourthbot
 import (
 	"testing"
 
-	"github.com/fourth/fourthbot/mock"
+	"github.com/simonjefford/fourthbot/mock"
 )
 
 func TestCommandHandling(t *testing.T) {

@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/chzyer/readline"
-	"github.com/fourth/fourthbot"
-	"github.com/fourth/fourthbot/mock"
-	"github.com/fourth/fourthbot/mock/responders"
+	"github.com/simonjefford/fourthbot"
+	"github.com/simonjefford/fourthbot/mock"
+	"github.com/simonjefford/fourthbot/mock/responders"
 )
 
 func main() {
