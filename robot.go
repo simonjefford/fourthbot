@@ -37,14 +37,12 @@ func (f ResponderFunc) Respond(cmd *Command, rw ResponseWriter) {
 // to the appropriate Responder
 type Robot struct {
 	commands map[string]Responder
-	rw       ResponseWriter
 }
 
 // NewRobot initializes a new Robot
-func NewRobot(rw ResponseWriter) *Robot {
+func NewRobot() *Robot {
 	return &Robot{
 		commands: make(map[string]Responder),
-		rw:       rw,
 	}
 }
 
@@ -54,11 +52,11 @@ func (r *Robot) RegisterResponder(c string, res Responder) {
 }
 
 // HandleCommand dispatches a Command to the appropriate Responder
-func (r *Robot) HandleCommand(c *Command) error {
+func (r *Robot) HandleCommand(c *Command, rw ResponseWriter) error {
 	res, ok := r.commands[c.Name]
 	if !ok {
 		return ErrUnknownCommand
 	}
-	res.Respond(c, r.rw)
+	res.Respond(c, rw)
 	return nil
 }

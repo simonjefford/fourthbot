@@ -8,12 +8,12 @@ import (
 
 func TestRobotCommandDispatch(t *testing.T) {
 	c, _ := ParseCommand("/deploy")
-	r := NewRobot(mock.NewMockResponseWriter())
+	r := NewRobot()
 	dispatched := false
 	r.RegisterResponder("/deploy", ResponderFunc(func(c *Command, rw ResponseWriter) {
 		dispatched = true
 	}))
-	err := r.HandleCommand(c)
+	err := r.HandleCommand(c, mock.NewMockResponseWriter())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,7 +22,7 @@ func TestRobotCommandDispatch(t *testing.T) {
 	}
 
 	c, _ = ParseCommand("/does not exist")
-	err = r.HandleCommand(c)
+	err = r.HandleCommand(c, mock.NewMockResponseWriter())
 	if err != ErrUnknownCommand {
 		t.Fatal("Expected ErrUnknownCommand, got", err)
 	}

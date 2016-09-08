@@ -26,7 +26,8 @@ func (t *terminalWriter) WriteStatus(s string) {
 }
 
 func main() {
-	r := fourthbot.NewRobot(newTerminalWriter())
+	r := fourthbot.NewRobot()
+	rw := newTerminalWriter()
 	responders.RegisterAll(r)
 
 	l, err := readline.NewEx(&readline.Config{
@@ -53,7 +54,7 @@ func main() {
 			fmt.Println(err)
 			continue
 		}
-		err = r.HandleCommand(c)
+		err = r.HandleCommand(c, rw)
 		if err != nil {
 			fmt.Println(err)
 		}
