@@ -11,6 +11,6 @@ import (
 type Echo struct{}
 
 // Respond provides the implementation for Responder
-func (e Echo) Respond(c *fourthbot.Command) {
+func (e Echo) Respond(c *fourthbot.Command, rw fourthbot.ResponseWriter) {
 	fmt.Println("echoing")
 }

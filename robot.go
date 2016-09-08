@@ -7,7 +7,7 @@ import (
 
 // A Responder responds a command received by a Robot
 type Responder interface {
-	Respond(cmd *Command)
+	Respond(cmd *Command, rw ResponseWriter)
 }
 
 var (
@@ -20,13 +20,20 @@ var (
 	ErrMissingSlash = errors.New("Parse error: missing slash")
 )
 
+// A ResponseWriter is used by a Responder to write response to a
+// command.
+type ResponseWriter interface {
+	Write([]byte) (int, error)
+	WriteStatus(string)
+}
+
 // The ResponderFunc type is an adapter to allow the use of ordinary
 // functions as Responders
-type ResponderFunc func(cmd *Command)
+type ResponderFunc func(cmd *Command, rw ResponseWriter)
 
-// Respond calls f(msg)
-func (f ResponderFunc) Respond(cmd *Command) {
-	f(cmd)
+// Respond calls f(cmd, rw)
+func (f ResponderFunc) Respond(cmd *Command, rw ResponseWriter) {
+	f(cmd, rw)
 }
 
 // Command represents a command received by a Robot
@@ -71,6 +78,6 @@ func (r *Robot) HandleCommand(c *Command) error {
 	if !ok {
 		return ErrUnknownCommand
 	}
-	res.Respond(c)
+	res.Respond(c, nil)
 	return nil
 }

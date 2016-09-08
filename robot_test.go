@@ -6,7 +6,7 @@ func TestCommandHandling(t *testing.T) {
 	c, _ := ParseCommand("/deploy")
 	r := NewRobot()
 	dispatched := false
-	r.RegisterResponder("/deploy", ResponderFunc(func(c *Command) {
+	r.RegisterResponder("/deploy", ResponderFunc(func(c *Command, rw ResponseWriter) {
 		dispatched = true
 	}))
 	err := r.HandleCommand(c)
