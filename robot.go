@@ -58,12 +58,14 @@ func ParseCommand(c string) (*Command, error) {
 // to the appropriate Responder
 type Robot struct {
 	commands map[string]Responder
+	rw       ResponseWriter
 }
 
 // NewRobot initializes a new Robot
-func NewRobot() *Robot {
+func NewRobot(rw ResponseWriter) *Robot {
 	return &Robot{
 		commands: make(map[string]Responder),
+		rw:       rw,
 	}
 }
 
@@ -78,6 +80,6 @@ func (r *Robot) HandleCommand(c *Command) error {
 	if !ok {
 		return ErrUnknownCommand
 	}
-	res.Respond(c, nil)
+	res.Respond(c, r.rw)
 	return nil
 }

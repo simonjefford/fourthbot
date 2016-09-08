@@ -7,11 +7,12 @@ import (
 
 	"github.com/chzyer/readline"
 	"github.com/fourth/fourthbot"
+	"github.com/fourth/fourthbot/mock"
 	"github.com/fourth/fourthbot/mock/responders"
 )
 
 func main() {
-	r := fourthbot.NewRobot()
+	r := fourthbot.NewRobot(mock.NewMockResponseWriter())
 	responders.RegisterAll(r)
 
 	l, err := readline.NewEx(&readline.Config{

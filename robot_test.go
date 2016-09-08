@@ -1,10 +1,14 @@
 package fourthbot
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/fourth/fourthbot/mock"
+)
 
 func TestCommandHandling(t *testing.T) {
 	c, _ := ParseCommand("/deploy")
-	r := NewRobot()
+	r := NewRobot(mock.NewMockResponseWriter())
 	dispatched := false
 	r.RegisterResponder("/deploy", ResponderFunc(func(c *Command, rw ResponseWriter) {
 		dispatched = true
