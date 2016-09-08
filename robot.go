@@ -38,8 +38,8 @@ func (f ResponderFunc) Respond(cmd *Command, rw ResponseWriter) {
 
 // Command represents a command received by a Robot
 type Command struct {
-	name string
-	args []string
+	Name string
+	Args []string
 }
 
 // ParseCommand creates a Command from a raw string
@@ -49,8 +49,8 @@ func ParseCommand(c string) (*Command, error) {
 	}
 	parts := strings.Split(c, " ")
 	return &Command{
-		name: parts[0],
-		args: parts[1:],
+		Name: parts[0],
+		Args: parts[1:],
 	}, nil
 }
 
@@ -76,7 +76,7 @@ func (r *Robot) RegisterResponder(c string, res Responder) {
 
 // HandleCommand dispatches a Command to the appropriate Responder
 func (r *Robot) HandleCommand(c *Command) error {
-	res, ok := r.commands[c.name]
+	res, ok := r.commands[c.Name]
 	if !ok {
 		return ErrUnknownCommand
 	}

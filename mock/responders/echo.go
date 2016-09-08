@@ -2,6 +2,7 @@ package responders
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/simonjefford/fourthbot"
 )
@@ -12,5 +13,5 @@ type Echo struct{}
 
 // Respond provides the implementation for Responder
 func (e Echo) Respond(c *fourthbot.Command, rw fourthbot.ResponseWriter) {
-	fmt.Println("echoing")
+	fmt.Fprintln(rw, strings.Join(c.Args, " "))
 }

@@ -3,16 +3,30 @@ package main
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/chzyer/readline"
 	"github.com/simonjefford/fourthbot"
-	"github.com/simonjefford/fourthbot/mock"
 	"github.com/simonjefford/fourthbot/mock/responders"
 )
 
+type terminalWriter struct {
+	io.Writer
+}
+
+func newTerminalWriter() *terminalWriter {
+	return &terminalWriter{
+		os.Stdout,
+	}
+}
+
+func (t *terminalWriter) WriteStatus(s string) {
+	fmt.Fprintln(t, s)
+}
+
 func main() {
-	r := fourthbot.NewRobot(mock.NewMockResponseWriter())
+	r := fourthbot.NewRobot(newTerminalWriter())
 	responders.RegisterAll(r)
 
 	l, err := readline.NewEx(&readline.Config{

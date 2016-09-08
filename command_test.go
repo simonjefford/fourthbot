@@ -11,8 +11,8 @@ func TestCommandParsing(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if c.name != "echo" && !reflect.DeepEqual([]string{"hi"}, c.args) {
-		t.Fatal("The command was not parsed correctly. Got this:", c.name, c.args)
+	if c.Name != "echo" && !reflect.DeepEqual([]string{"hi"}, c.Args) {
+		t.Fatal("The command was not parsed correctly. Got this:", c.Name, c.Args)
 	}
 
 	_, err = ParseCommand("echo hi")
