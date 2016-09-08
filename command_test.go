@@ -1,6 +1,7 @@
 package fourthbot
 
 import (
+	"context"
 	"reflect"
 	"testing"
 )
@@ -18,5 +19,19 @@ func TestCommandParsing(t *testing.T) {
 	_, err = ParseCommand("echo hi")
 	if err != ErrMissingSlash {
 		t.Fatal("expected ErrMissingSlash, got", err)
+	}
+}
+
+func TestCommandContext(t *testing.T) {
+	c := &Command{
+		Name: "/commandwithcontext",
+	}
+	if c.Context() != context.Background() {
+		t.Errorf("Expected context.Background as default")
+	}
+	ctx := context.WithValue(context.Background(), "key", "value")
+	c = c.WithContext(ctx)
+	if c.Context() != ctx {
+		t.Errorf("Expected new context after WithContext(ctx)")
 	}
 }
