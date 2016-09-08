@@ -2,19 +2,23 @@ package mock
 
 import "bytes"
 
-type MockResponseWriter struct {
+// ResponseWriter is a mock implementation of fourthbot.ResponseWriter
+type ResponseWriter struct {
 	*bytes.Buffer
 	WriteStatusInvoked bool
 	WrittenStatus      int
 }
 
-func NewMockResponseWriter() *MockResponseWriter {
-	return &MockResponseWriter{
+// NewResponseWriter creates a ResponseWriter
+func NewResponseWriter() *ResponseWriter {
+	return &ResponseWriter{
 		Buffer: new(bytes.Buffer),
 	}
 }
 
-func (m *MockResponseWriter) WriteStatus(s int) {
+// WriteStatus is a mock implementation of
+// fourthbot.ResponseWriter.WriteStatus
+func (m *ResponseWriter) WriteStatus(s int) {
 	m.WrittenStatus = s
 	m.WriteStatusInvoked = true
 }
