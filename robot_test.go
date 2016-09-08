@@ -6,7 +6,7 @@ import (
 	"github.com/simonjefford/fourthbot/mock"
 )
 
-func TestCommandHandling(t *testing.T) {
+func TestRobotCommandDispatch(t *testing.T) {
 	c, _ := ParseCommand("/deploy")
 	r := NewRobot(mock.NewMockResponseWriter())
 	dispatched := false
