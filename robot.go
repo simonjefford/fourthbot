@@ -21,7 +21,7 @@ var (
 // command.
 type ResponseWriter interface {
 	Write([]byte) (int, error)
-	WriteStatus(string)
+	WriteStatus(int)
 }
 
 // The ResponderFunc type is an adapter to allow the use of ordinary

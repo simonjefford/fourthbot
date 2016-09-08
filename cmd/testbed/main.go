@@ -21,8 +21,8 @@ func newTerminalWriter() *terminalWriter {
 	}
 }
 
-func (t *terminalWriter) WriteStatus(s string) {
-	fmt.Fprintln(t, s)
+func (t *terminalWriter) WriteStatus(s int) {
+	fmt.Fprintln(t, "Written status - ", s)
 }
 
 func main() {

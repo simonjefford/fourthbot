@@ -5,7 +5,7 @@ import "bytes"
 type MockResponseWriter struct {
 	*bytes.Buffer
 	WriteStatusInvoked bool
-	WrittenStatus      string
+	WrittenStatus      int
 }
 
 func NewMockResponseWriter() *MockResponseWriter {
@@ -14,7 +14,7 @@ func NewMockResponseWriter() *MockResponseWriter {
 	}
 }
 
-func (m *MockResponseWriter) WriteStatus(s string) {
+func (m *MockResponseWriter) WriteStatus(s int) {
 	m.WrittenStatus = s
 	m.WriteStatusInvoked = true
 }
