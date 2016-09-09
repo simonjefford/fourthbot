@@ -7,6 +7,24 @@
 			"path": "github.com/chzyer/readline",
 			"revision": "31ab3eee0c7232dcb9abeb3876ca2739df53872d",
 			"revisionTime": "2016-09-04T13:05:21Z"
+		},
+		{
+			"checksumSHA1": "PMr/a5kcnC4toJtVwWhlU5E4tJY=",
+			"path": "go4.org/errorutil",
+			"revision": "5af682b5815ea6e8f790ed27069dcb046d8a5cfe",
+			"revisionTime": "2016-09-08T19:58:05Z"
+		},
+		{
+			"checksumSHA1": "PQ/KC4DEq2LqB7zlSOk5yBU4Lvk=",
+			"path": "go4.org/jsonconfig",
+			"revision": "5af682b5815ea6e8f790ed27069dcb046d8a5cfe",
+			"revisionTime": "2016-09-08T19:58:05Z"
+		},
+		{
+			"checksumSHA1": "BS9oue0y6JjMzz3spKlMTVmxZxo=",
+			"path": "go4.org/wkfs",
+			"revision": "5af682b5815ea6e8f790ed27069dcb046d8a5cfe",
+			"revisionTime": "2016-09-08T19:58:05Z"
 		}
 	],
 	"rootPath": "github.com/simonjefford/fourthbot"
