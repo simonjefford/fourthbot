@@ -2,7 +2,7 @@ package fourthbot
 
 import "errors"
 
-// A Responder responds a command received by a Robot
+// A Responder responds to a command received by a Robot
 type Responder interface {
 	Respond(cmd *Command, rw ResponseWriter)
 }
