@@ -2,7 +2,14 @@ package fourthbot
 
 import (
 	"context"
+	"errors"
 	"strings"
+)
+
+var (
+	// ErrMissingSlash is the error used when a command is missing
+	// the leading slash
+	ErrMissingSlash = errors.New("Parse error: missing slash")
 )
 
 // Command represents a command received by a Robot

@@ -11,10 +11,6 @@ var (
 	// ErrUnknownCommand is the error used when a command is
 	// unknown
 	ErrUnknownCommand = errors.New("Unknown command")
-
-	// ErrMissingSlash is the error used when a command is missing
-	// the leading slash
-	ErrMissingSlash = errors.New("Parse error: missing slash")
 )
 
 // A ResponseWriter is used by a Responder to write response to a
