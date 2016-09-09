@@ -7,5 +7,5 @@ import (
 // RegisterAll is a convenience function for registering all the mock
 // and test Responders with a Robot
 func RegisterAll(r *fourthbot.Robot) {
-	r.RegisterResponder("/echo", Echo{})
+	r.RegisterResponder("/echo", Echo)
 }

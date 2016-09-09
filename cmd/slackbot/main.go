@@ -9,6 +9,6 @@ import (
 
 func main() {
 	s := http.NewServer()
-	s.RegisterResponder("/echo", responders.Echo{})
+	s.RegisterResponder("/echo", responders.Echo)
 	log.Fatal(s.ListenAndServe(":8080"))
 }
