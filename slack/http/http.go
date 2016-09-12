@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -23,27 +24,33 @@ func (srw *slackResponseWriter) WriteStatus(s int) {
 	srw.WriteHeader(s)
 }
 
-// A Server listens for incoming /slash commands from Slack
-type Server struct {
+// A SlackServer listens for incoming /slash commands from Slack
+type SlackServer struct {
 	robot *fourthbot.Robot
 }
 
 // NewServer returns a new instance of Server configured with a Robot.
-func NewServer() *Server {
-	return &Server{fourthbot.NewRobot()}
+func NewServer() *SlackServer {
+	return &SlackServer{fourthbot.NewRobot()}
 }
 
 // ListenAndServe starts up an HTTP server using s as its handler.
-func (s *Server) ListenAndServe(addr string) error {
+func (s *SlackServer) ListenAndServe(addr string) error {
 	return http.ListenAndServe(addr, s)
 }
 
 // RegisterResponder registers a Responder with the underlying Robot.
-func (s *Server) RegisterResponder(c string, res fourthbot.Responder) {
+func (s *SlackServer) RegisterResponder(c string, res fourthbot.Responder) {
 	s.robot.RegisterResponder(c, res)
 }
 
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+// RegisterResponders allows Server to use a Registrar to register one
+// or more Responders.
+func (s *SlackServer) RegisterResponders(res fourthbot.Registrar) {
+	res.RegisterResponders(s.robot)
+}
+
+func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.FormValue(slackFormKeySSLCheck) != "" {
 		w.WriteHeader(http.StatusOK)
 		return
@@ -59,6 +66,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	c := &fourthbot.Command{}
 	c = slack.CommandWithSlackKeys(c, r.Form)
+	log.Println(c.Context())
 	c.Name = cmdstr
 	c.Args = strings.Split(textstr, " ")
 

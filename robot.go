@@ -7,6 +7,18 @@ type Responder interface {
 	Respond(cmd *Command, rw ResponseWriter)
 }
 
+// A Registrar registers one or more responders with a Robot
+type Registrar interface {
+	RegisterResponders(r *Robot)
+}
+
+// A RegisteringResponder is a Responder that can register itself with
+// a Robot (i.e. it is both a Responder and a Registrar).
+type RegisteringResponder interface {
+	Responder
+	Registrar
+}
+
 var (
 	// ErrUnknownCommand is the error used when a command is
 	// unknown
