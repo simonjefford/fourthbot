@@ -9,18 +9,25 @@ import (
 
 type key int
 
-const slackFormKey = 0
+const (
+	slackResponseURLKey = iota
+)
 
-// KeysFromCommand returns the slack form values stored in the
+const (
+	formResponseURLKey = "response_url"
+)
+
+// ResponseURLFromCommand returns the response_url stored in the
 // context of the Command.
-func KeysFromCommand(cmd *fourthbot.Command) (url.Values, bool) {
-	val, ok := cmd.Context().Value(slackFormKey).(url.Values)
+func ResponseURLFromCommand(cmd *fourthbot.Command) (string, bool) {
+	val, ok := cmd.Context().Value(slackResponseURLKey).(string)
 	return val, ok
 }
 
-// CommandWithSlackKeys returns a new command with vals stored in its
+// CommandWithSlackData returns a new command with vals stored in its
 // context.
-func CommandWithSlackKeys(cmd *fourthbot.Command, vals url.Values) *fourthbot.Command {
-	ctx := context.WithValue(cmd.Context(), slackFormKey, vals)
+func CommandWithSlackData(cmd *fourthbot.Command, vals url.Values) *fourthbot.Command {
+	ctx := cmd.Context()
+	ctx = context.WithValue(ctx, slackResponseURLKey, vals.Get(formResponseURLKey))
 	return cmd.WithContext(ctx)
 }
