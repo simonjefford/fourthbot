@@ -1,6 +1,7 @@
 package jenkins
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -55,7 +56,7 @@ func (j *jenkinsServer) RegisterResponders(r *fourthbot.Robot) {
 	}
 }
 
-func (j *jenkinsServer) job(cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
+func (j *jenkinsServer) job(ctx context.Context, cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
 	if j.client == nil {
 		j.client = gojenk.NewJenkins(j.auth, j.addr)
 	}
@@ -77,12 +78,12 @@ func (j *jenkinsServer) job(cmd *fourthbot.Command, w fourthbot.ResponseWriter) 
 	fmt.Fprintln(w, "Last successful build was", job.LastSuccessfulBuild.Url)
 }
 
-func (j *jenkinsServer) Respond(cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
+func (j *jenkinsServer) Respond(ctx context.Context, cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
 	h, ok := j.handlers[cmd.Name]
 	if !ok {
 		// TODO(SJJ) status handling
 		w.WriteStatus(500)
 	}
 
-	h(cmd, w)
+	h(ctx, cmd, w)
 }

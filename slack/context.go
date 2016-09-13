@@ -3,8 +3,6 @@ package slack
 import (
 	"context"
 	"net/url"
-
-	"github.com/simonjefford/fourthbot"
 )
 
 type key int
@@ -17,17 +15,15 @@ const (
 	formResponseURLKey = "response_url"
 )
 
-// ResponseURLFromCommand returns the response_url stored in the
-// context of the Command.
-func ResponseURLFromCommand(cmd *fourthbot.Command) (string, bool) {
-	val, ok := cmd.Context().Value(slackResponseURLKey).(string)
+// ResponseURLFromContext returns the response_url stored in the
+// ctx.
+func ResponseURLFromContext(ctx context.Context) (string, bool) {
+	val, ok := ctx.Value(slackResponseURLKey).(string)
 	return val, ok
 }
 
-// CommandWithSlackData returns a new command with vals stored in its
+// ContextWithSlackData returns a new command with vals stored in its
 // context.
-func CommandWithSlackData(cmd *fourthbot.Command, vals url.Values) *fourthbot.Command {
-	ctx := cmd.Context()
-	ctx = context.WithValue(ctx, slackResponseURLKey, vals.Get(formResponseURLKey))
-	return cmd.WithContext(ctx)
+func ContextWithSlackData(ctx context.Context, vals url.Values) context.Context {
+	return context.WithValue(ctx, slackResponseURLKey, vals.Get(formResponseURLKey))
 }

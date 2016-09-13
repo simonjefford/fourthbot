@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -65,12 +66,12 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := &fourthbot.Command{}
-	c = slack.CommandWithSlackData(c, r.Form)
-	log.Println(c.Context())
+	ctx := slack.ContextWithSlackData(context.Background(), r.Form)
+	log.Println(ctx)
 	c.Name = cmdstr
 	c.Args = strings.Split(textstr, " ")
 
-	err := s.robot.HandleCommand(c, &slackResponseWriter{w})
+	err := s.robot.HandleCommand(ctx, c, &slackResponseWriter{w})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, err.Error())

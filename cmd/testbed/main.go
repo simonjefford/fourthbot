@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -54,7 +55,7 @@ func main() {
 			fmt.Println(err)
 			continue
 		}
-		err = r.HandleCommand(c, rw)
+		err = r.HandleCommand(context.Background(), c, rw)
 		if err != nil {
 			fmt.Println(err)
 		}
