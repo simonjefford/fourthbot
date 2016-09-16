@@ -27,6 +27,12 @@
 			"revisionTime": "2016-09-08T19:58:05Z"
 		},
 		{
+			"checksumSHA1": "jBGK0h7r02bicRzVu+TP27H6t6E=",
+			"path": "go4.org/testing/functest",
+			"revision": "5af682b5815ea6e8f790ed27069dcb046d8a5cfe",
+			"revisionTime": "2016-09-08T19:58:05Z"
+		},
+		{
 			"checksumSHA1": "BS9oue0y6JjMzz3spKlMTVmxZxo=",
 			"path": "go4.org/wkfs",
 			"revision": "5af682b5815ea6e8f790ed27069dcb046d8a5cfe",
