@@ -68,6 +68,6 @@ func (r *Robot) HandleCommand(ctx context.Context, c *Command, rw ResponseWriter
 	if !ok {
 		return ErrUnknownCommand
 	}
-	res.Respond(context.Background(), c, rw)
+	res.Respond(ctx, c, rw)
 	return nil
 }

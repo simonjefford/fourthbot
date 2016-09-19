@@ -46,3 +46,16 @@ func TestResponseFromResponder(t *testing.T) {
 		t.Error("responder not called")
 	}
 }
+
+func TestContextPropagation(t *testing.T) {
+	tr := &testResponder{
+		name: "fooResponder",
+	}
+	hook := "https://slack.com/hook"
+	runTest(t, tr, "/foo", map[string][]string{
+		"response_url": []string{hook},
+	})
+	if g, e := tr.responderContext.Value(0), hook; g != e {
+		t.Errorf("Expected %s got %v", e, g)
+	}
+}
