@@ -36,6 +36,17 @@ func runTest(t *testing.T, tr *testResponder, cmdstr string, form url.Values) *h
 	return w
 }
 
+func runTestWithRegistrar(t *testing.T, reg *registrar, cmdstr string, form url.Values) *httptest.ResponseRecorder {
+	s := NewServer()
+	s.RegisterResponders(reg)
+	form.Set("command", cmdstr)
+	r := httptest.NewRequest("POST", "/", strings.NewReader(form.Encode()))
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	w := httptest.NewRecorder()
+	s.ServeHTTP(w, r)
+	return w
+}
+
 func TestResponseFromResponder(t *testing.T) {
 	tr := &testResponder{
 		name:   "fooResponder",
@@ -72,5 +83,24 @@ func TestContextPropagation(t *testing.T) {
 	})
 	if g, e := tr.responderContext.Value(0), hook; g != e {
 		t.Errorf("Expected %s got %v", e, g)
+	}
+}
+
+type registrar struct {
+	res *testResponder
+}
+
+func (r *registrar) RegisterResponders(robot *fourthbot.Robot) {
+	robot.RegisterResponder("/foo", r.res)
+}
+
+func TestRegistrarHandling(t *testing.T) {
+	tr := &testResponder{
+		name: "fooResponder",
+	}
+	r := &registrar{tr}
+	runTestWithRegistrar(t, r, "/foo", map[string][]string{})
+	if !tr.called {
+		t.Errorf("Expected responder to be called but was not")
 	}
 }
