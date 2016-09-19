@@ -47,6 +47,7 @@ func TestResponseFromResponder(t *testing.T) {
 	}
 }
 
+// TODO(SJJ) - this test is probably in the wrong place...
 func TestContextPropagation(t *testing.T) {
 	tr := &testResponder{
 		name: "fooResponder",
