@@ -3,7 +3,6 @@ package http
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -67,7 +66,6 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	c := &fourthbot.Command{}
 	ctx := slack.ContextWithSlackData(context.Background(), r.Form)
-	log.Println(ctx)
 	c.Name = cmdstr
 	c.Args = strings.Split(textstr, " ")
 
