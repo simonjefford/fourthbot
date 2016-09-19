@@ -14,12 +14,14 @@ import (
 type testResponder struct {
 	name             string
 	called           bool
+	status           int
 	responderContext context.Context
 }
 
 func (r *testResponder) Respond(ctx context.Context, cmd *fourthbot.Command, rw fourthbot.ResponseWriter) {
 	r.called = true
 	r.responderContext = ctx
+	rw.WriteStatus(r.status)
 	fmt.Fprintf(rw, "called by %s", r.name)
 }
 
@@ -36,7 +38,8 @@ func runTest(t *testing.T, tr *testResponder, cmdstr string, form url.Values) *h
 
 func TestResponseFromResponder(t *testing.T) {
 	tr := &testResponder{
-		name: "fooResponder",
+		name:   "fooResponder",
+		status: 200,
 	}
 	w := runTest(t, tr, "/foo", map[string][]string{})
 	if w.Code != 200 {
@@ -44,6 +47,17 @@ func TestResponseFromResponder(t *testing.T) {
 	}
 	if !tr.called {
 		t.Error("responder not called")
+	}
+}
+
+func TestResponderStatusTreatedAsHTTPStatus(t *testing.T) {
+	tr := &testResponder{
+		name:   "fooResponder",
+		status: 400,
+	}
+	w := runTest(t, tr, "/foo", map[string][]string{})
+	if w.Code != 400 {
+		t.Errorf("Expected 400 got %d", w.Code)
 	}
 }
 
