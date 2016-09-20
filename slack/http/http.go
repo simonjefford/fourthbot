@@ -61,6 +61,7 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if cmdstr == "" {
 		// TODO(SJJ) - how to handle this properly?
 		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "no command")
 		return
 	}
 

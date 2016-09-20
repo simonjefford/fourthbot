@@ -104,3 +104,14 @@ func TestRegistrarHandling(t *testing.T) {
 		t.Errorf("Expected responder to be called but was not")
 	}
 }
+
+func TestSSLCheck(t *testing.T) {
+	s := NewServer()
+	r := httptest.NewRequest("POST", "/?ssl_check=1", strings.NewReader(make(url.Values).Encode()))
+
+	w := httptest.NewRecorder()
+	s.ServeHTTP(w, r)
+	if w.Code != 200 {
+		t.Errorf("Expected 200 on an ssl_check, got %d. Body was %s", w.Code, w.Body.String())
+	}
+}
