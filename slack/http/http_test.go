@@ -126,3 +126,18 @@ func TestMissingCommand(t *testing.T) {
 		t.Errorf("Expected 500 on a missing command, got %d.", w.Code)
 	}
 }
+
+func TestRobotError(t *testing.T) {
+	s := NewServer()
+	tr := &testResponder{}
+	s.RegisterResponder("/foo", tr)
+	form := make(url.Values)
+	form.Set("command", "/bar")
+	r := httptest.NewRequest("POST", "/", strings.NewReader(form.Encode()))
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	w := httptest.NewRecorder()
+	s.ServeHTTP(w, r)
+	if w.Code != 500 {
+		t.Errorf("Expected 500 on a robot error, got %d.", w.Code)
+	}
+}
