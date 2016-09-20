@@ -122,8 +122,8 @@ func TestMissingCommand(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	s.ServeHTTP(w, r)
-	if w.Code != 500 {
-		t.Errorf("Expected 500 on a missing command, got %d.", w.Code)
+	if w.Code != 400 {
+		t.Errorf("Expected 400 on a missing command, got %d.", w.Code)
 	}
 }
 

@@ -59,8 +59,7 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	cmdstr := r.FormValue(slackFormKeyCommmand)
 	textstr := r.FormValue(slackFormKeyText)
 	if cmdstr == "" {
-		// TODO(SJJ) - how to handle this properly?
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "no command")
 		return
 	}
