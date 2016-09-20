@@ -107,7 +107,7 @@ func TestRegistrarHandling(t *testing.T) {
 
 func TestSSLCheck(t *testing.T) {
 	s := NewServer()
-	r := httptest.NewRequest("POST", "/?ssl_check=1", strings.NewReader(make(url.Values).Encode()))
+	r := httptest.NewRequest("POST", "/?ssl_check=1", nil)
 
 	w := httptest.NewRecorder()
 	s.ServeHTTP(w, r)
