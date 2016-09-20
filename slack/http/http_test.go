@@ -115,3 +115,14 @@ func TestSSLCheck(t *testing.T) {
 		t.Errorf("Expected 200 on an ssl_check, got %d. Body was %s", w.Code, w.Body.String())
 	}
 }
+
+func TestMissingCommand(t *testing.T) {
+	s := NewServer()
+	r := httptest.NewRequest("POST", "/", nil)
+
+	w := httptest.NewRecorder()
+	s.ServeHTTP(w, r)
+	if w.Code != 500 {
+		t.Errorf("Expected 500 on a missing command, got %d.", w.Code)
+	}
+}
