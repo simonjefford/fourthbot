@@ -59,6 +59,10 @@ func TestResponseFromResponder(t *testing.T) {
 	if !tr.called {
 		t.Error("responder not called")
 	}
+	if g, e := w.Body.String(), "called by fooResponder"; g != e {
+		t.Errorf("Got \"%s\", expected \"%s\"", g, e)
+	}
+
 }
 
 func TestResponderStatusTreatedAsHTTPStatus(t *testing.T) {
