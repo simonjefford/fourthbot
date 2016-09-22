@@ -98,15 +98,44 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c.Name = cmdstr
 	c.Args = strings.Split(textstr, " ")
 
-	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
-	defer cancel()
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Minute)
 	finished := make(chan bool)
 	srw := newSlackResponseWriter(w)
 	go s.handle(ctx, c, srw, finished)
 	select {
-	case <-ctx.Done():
+	case <-time.After(3 * time.Second):
 		fmt.Fprint(srw.ResponseWriter, "Working on it...")
+		go s.waitForLongRunningOp(ctx, cancel, finished)
 	case <-finished:
+		cancel()
 		srw.WriteResponseToHTTP()
+	}
+}
+
+func (s *SlackServer) waitForLongRunningOp(ctx context.Context, cancel context.CancelFunc, finished chan bool) {
+	defer cancel()
+	select {
+	case <-ctx.Done():
+		// op timed out
+		return
+	case <-finished:
+		// can write the response to `response_url`
+		url, ok := slack.ResponseURLFromContext(ctx)
+		if !ok {
+			// TODO(SJJ) what do do here?
+			return
+		}
+		r, err := http.NewRequest("POST", url, nil)
+		if err != nil {
+			// TODO(SJJ) what do do here?
+			return
+		}
+
+		r = r.WithContext(ctx)
+		_, err = http.DefaultClient.Do(r)
+		if err != nil {
+			// TODO(SJJ) what do do here?
+			return
+		}
 	}
 }

@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"fmt"
+	stdhttp "net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
@@ -160,8 +161,23 @@ func TestLongRequests(t *testing.T) {
 			fmt.Fprintf(rw, "long running command finished")
 		},
 	}
-	res := runTest(t, tr, "/foo", map[string][]string{})
+
+	postOccured := false
+
+	dummySlack := httptest.NewServer(stdhttp.HandlerFunc(func(w stdhttp.ResponseWriter, r *stdhttp.Request) {
+		postOccured = true
+		t.Log("!!!!! POST !!!!!")
+	}))
+
+	res := runTest(t, tr, "/foo", map[string][]string{
+		"response_url": []string{dummySlack.URL},
+	})
 	if g, e := res.Body.String(), "Working on it..."; g != e {
 		t.Errorf("Expected \"%s\", got \"%s\" in the response", e, g)
+	}
+
+	time.Sleep(2 * time.Second)
+	if !postOccured {
+		t.Errorf("Web hook was not POSTed to")
 	}
 }
