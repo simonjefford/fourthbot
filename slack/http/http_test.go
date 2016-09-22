@@ -163,10 +163,12 @@ func TestLongRequests(t *testing.T) {
 	}
 
 	postOccured := false
+	done := make(chan struct{})
 
 	dummySlack := httptest.NewServer(stdhttp.HandlerFunc(func(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 		postOccured = true
 		t.Log("!!!!! POST !!!!!")
+		close(done)
 	}))
 
 	res := runTest(t, tr, "/foo", map[string][]string{
@@ -176,7 +178,11 @@ func TestLongRequests(t *testing.T) {
 		t.Errorf("Expected \"%s\", got \"%s\" in the response", e, g)
 	}
 
-	time.Sleep(2 * time.Second)
+	select {
+	case <-done:
+	case <-time.After(time.Second * 5): // just in case the POST doesn't happen
+	}
+
 	if !postOccured {
 		t.Errorf("Web hook was not POSTed to")
 	}
