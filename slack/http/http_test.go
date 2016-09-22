@@ -2,7 +2,9 @@ package http
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	stdhttp "net/http"
 	"net/http/httptest"
 	"net/url"
@@ -158,16 +160,19 @@ func TestLongRequests(t *testing.T) {
 		name: "long running request",
 		f: func(ctx context.Context, cmd *fourthbot.Command, rw fourthbot.ResponseWriter) {
 			time.Sleep(4 * time.Second)
-			fmt.Fprintf(rw, "long running command finished")
+			fmt.Fprintf(rw, "{\"text\": \"Long running command finished.\"}")
 		},
 	}
 
 	postOccured := false
 	done := make(chan struct{})
+	var postBody []byte
+	var err error
 
 	dummySlack := httptest.NewServer(stdhttp.HandlerFunc(func(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 		postOccured = true
-		t.Log("!!!!! POST !!!!!")
+		postBody, err = ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
 		close(done)
 	}))
 
@@ -185,5 +190,13 @@ func TestLongRequests(t *testing.T) {
 
 	if !postOccured {
 		t.Errorf("Web hook was not POSTed to")
+		return
+	}
+
+	var j map[string]interface{}
+	err = json.Unmarshal(postBody, &j)
+	t.Logf("%#v", j["text"])
+	if err != nil {
+		t.Error(err)
 	}
 }

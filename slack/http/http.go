@@ -42,6 +42,21 @@ func (srw *slackResponseWriter) WriteResponseToHTTP() {
 	srw.buf.WriteTo(srw.ResponseWriter)
 }
 
+func (srw *slackResponseWriter) PostResponseToURL(ctx context.Context, url string) {
+	r, err := http.NewRequest("POST", url, srw.buf)
+	if err != nil {
+		// TODO(SJJ) what do do here?
+		return
+	}
+
+	r = r.WithContext(ctx)
+	_, err = http.DefaultClient.Do(r)
+	if err != nil {
+		// TODO(SJJ) what do do here?
+		return
+	}
+}
+
 // A SlackServer listens for incoming /slash commands from Slack
 type SlackServer struct {
 	robot *fourthbot.Robot
@@ -105,14 +120,14 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	select {
 	case <-time.After(3 * time.Second):
 		fmt.Fprint(srw.ResponseWriter, "Working on it...")
-		go s.waitForLongRunningOp(ctx, cancel, finished)
+		go s.waitForLongRunningOp(ctx, srw, cancel, finished)
 	case <-finished:
 		cancel()
 		srw.WriteResponseToHTTP()
 	}
 }
 
-func (s *SlackServer) waitForLongRunningOp(ctx context.Context, cancel context.CancelFunc, finished chan bool) {
+func (s *SlackServer) waitForLongRunningOp(ctx context.Context, srw *slackResponseWriter, cancel context.CancelFunc, finished chan bool) {
 	defer cancel()
 	select {
 	case <-ctx.Done():
@@ -125,17 +140,6 @@ func (s *SlackServer) waitForLongRunningOp(ctx context.Context, cancel context.C
 			// TODO(SJJ) what do do here?
 			return
 		}
-		r, err := http.NewRequest("POST", url, nil)
-		if err != nil {
-			// TODO(SJJ) what do do here?
-			return
-		}
-
-		r = r.WithContext(ctx)
-		_, err = http.DefaultClient.Do(r)
-		if err != nil {
-			// TODO(SJJ) what do do here?
-			return
-		}
+		srw.PostResponseToURL(ctx, url)
 	}
 }
