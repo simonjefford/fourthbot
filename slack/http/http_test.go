@@ -2,11 +2,15 @@ package http
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	stdhttp "net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/simonjefford/fourthbot"
 )
@@ -16,13 +20,18 @@ type testResponder struct {
 	called           bool
 	status           int
 	responderContext context.Context
+	f                func(context.Context, *fourthbot.Command, fourthbot.ResponseWriter)
 }
 
 func (r *testResponder) Respond(ctx context.Context, cmd *fourthbot.Command, rw fourthbot.ResponseWriter) {
 	r.called = true
 	r.responderContext = ctx
-	rw.WriteStatus(r.status)
-	fmt.Fprintf(rw, "called by %s", r.name)
+	if r.f != nil {
+		r.f(ctx, cmd, rw)
+	} else {
+		rw.WriteStatus(r.status)
+		fmt.Fprintf(rw, "called by %s", r.name)
+	}
 }
 
 func runTest(t *testing.T, tr *testResponder, cmdstr string, form url.Values) *httptest.ResponseRecorder {
@@ -59,6 +68,10 @@ func TestResponseFromResponder(t *testing.T) {
 	if !tr.called {
 		t.Error("responder not called")
 	}
+	if g, e := w.Body.String(), "called by fooResponder"; g != e {
+		t.Errorf("Got \"%s\", expected \"%s\"", g, e)
+	}
+
 }
 
 func TestResponderStatusTreatedAsHTTPStatus(t *testing.T) {
@@ -139,5 +152,51 @@ func TestRobotError(t *testing.T) {
 	s.ServeHTTP(w, r)
 	if w.Code != 500 {
 		t.Errorf("Expected 500 on a robot error, got %d.", w.Code)
+	}
+}
+
+func TestLongRequests(t *testing.T) {
+	tr := &testResponder{
+		name: "long running request",
+		f: func(ctx context.Context, cmd *fourthbot.Command, rw fourthbot.ResponseWriter) {
+			time.Sleep(4 * time.Second)
+			fmt.Fprintf(rw, "{\"text\": \"Long running command finished.\"}")
+		},
+	}
+
+	postOccured := false
+	done := make(chan struct{})
+	var postBody []byte
+	var err error
+
+	dummySlack := httptest.NewServer(stdhttp.HandlerFunc(func(w stdhttp.ResponseWriter, r *stdhttp.Request) {
+		postOccured = true
+		postBody, err = ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
+		close(done)
+	}))
+
+	res := runTest(t, tr, "/foo", map[string][]string{
+		"response_url": []string{dummySlack.URL},
+	})
+	if g, e := res.Body.String(), "Working on it..."; g != e {
+		t.Errorf("Expected \"%s\", got \"%s\" in the response", e, g)
+	}
+
+	select {
+	case <-done:
+	case <-time.After(time.Second * 5): // just in case the POST doesn't happen
+	}
+
+	if !postOccured {
+		t.Errorf("Web hook was not POSTed to")
+		return
+	}
+
+	var j map[string]interface{}
+	err = json.Unmarshal(postBody, &j)
+	t.Logf("%#v", j["text"])
+	if err != nil {
+		t.Error(err)
 	}
 }
