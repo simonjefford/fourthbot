@@ -200,3 +200,27 @@ func TestLongRequests(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestOptions(t *testing.T) {
+	s := NewServer(
+		PostResponseTimeout(5*time.Second),
+		SyncResponseTimeout(10*time.Second))
+
+	if g, e := s.postResponseTimeout, 5*time.Second; g != e {
+		t.Errorf("Got %v expected %v for post response timeout.", g, e)
+	}
+
+	if g, e := s.syncResponseTimeout, 10*time.Second; g != e {
+		t.Errorf("Got %v expected %v for sync response timeout.", g, e)
+	}
+
+	// test defaults
+	s = NewServer()
+	if g, e := s.postResponseTimeout, 30*time.Minute; g != e {
+		t.Errorf("Got %v expected %v for default post response timeout.", g, e)
+	}
+
+	if g, e := s.syncResponseTimeout, 3*time.Second; g != e {
+		t.Errorf("Got %v expected %v for default sync response timeout.", g, e)
+	}
+}

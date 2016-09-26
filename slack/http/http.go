@@ -61,11 +61,58 @@ func (srw *slackResponseWriter) PostResponseToURL(ctx context.Context, url strin
 // A SlackServer listens for incoming /slash commands from Slack
 type SlackServer struct {
 	robot *fourthbot.Robot
+
+	// maximum allowed time to return a synchronous
+	// response - i.e. during the initial HTTP request
+	syncResponseTimeout time.Duration
+
+	// maximum allowed time during which POSTs can be made
+	// to the response_url given by Slack
+	postResponseTimeout time.Duration
+}
+
+// Option is a func that can configure a slackserver
+type Option func(s *SlackServer)
+
+// SyncResponseTimeout returns an Option that sets the timeout period
+// for a synchronous response
+func SyncResponseTimeout(timeout time.Duration) Option {
+	return func(s *SlackServer) {
+		if timeout != 0 {
+			s.syncResponseTimeout = timeout
+		}
+	}
+}
+
+// PostResponseTimeout return an Option that sets the timeout period
+// for a posted response
+func PostResponseTimeout(timeout time.Duration) Option {
+	return func(s *SlackServer) {
+		if timeout != 0 {
+			s.postResponseTimeout = timeout
+		}
+	}
 }
 
 // NewServer returns a new instance of Server configured with a Robot.
-func NewServer() *SlackServer {
-	return &SlackServer{fourthbot.NewRobot()}
+func NewServer(opts ...Option) *SlackServer {
+	s := &SlackServer{
+		robot: fourthbot.NewRobot(),
+	}
+
+	for _, o := range opts {
+		o(s)
+	}
+
+	if s.postResponseTimeout == 0 {
+		s.postResponseTimeout = 30 * time.Minute
+	}
+
+	if s.syncResponseTimeout == 0 {
+		s.syncResponseTimeout = 3 * time.Second
+	}
+
+	return s
 }
 
 // ListenAndServe starts up an HTTP server using s as its handler.
@@ -115,12 +162,12 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c.Name = cmdstr
 	c.Args = strings.Split(textstr, " ")
 
-	ctx, cancel := context.WithTimeout(ctx, 30*time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, s.postResponseTimeout)
 	finished := make(chan bool)
 	srw := newSlackResponseWriter(w)
 	go s.handle(ctx, c, srw, finished)
 	select {
-	case <-time.After(3 * time.Second):
+	case <-time.After(s.syncResponseTimeout):
 		fmt.Fprint(srw.ResponseWriter, "Working on it...")
 		go s.waitForLongRunningOp(ctx, srw, cancel, finished)
 	case <-finished:
