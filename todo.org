@@ -1,0 +1,35 @@
+#+STARTUP: indent
+* Things that Need To Be Done
+
+** Configuration
+
+*** TODO Frontend for configuring responders
+
+A responder may need to be configured to deal with multiple
+commands. For example /deploy-eparts-dev would need to be configured
+to trigger the Jenkins responder with a particular configuration. It
+would be nice (if possible with the Slack API) to automatically
+register commands with Slack as well.
+
+*** TODO jsonconfig extension to read from Azure table storage
+
+Will help with the above...
+
+** Jenkins responder
+
+*** TODO Use the configuration extensions above to register
+
+*** TODO find another package or just use HTTP
+
+So we can pass the context in when we make the request so resources
+will be properly tidied away on timeout.
+
+*** TODO tests
+
+** Slackbot binary
+
+*** TODO Will need to be able to trigger a reconfiguration
+
+** Throughout
+
+*** TODO Proper logging
