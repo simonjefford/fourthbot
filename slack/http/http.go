@@ -39,6 +39,7 @@ func (srw *slackResponseWriter) Write(b []byte) (int, error) {
 }
 
 func (srw *slackResponseWriter) WriteResponseToHTTP() {
+	srw.Header().Add("Content-Type", "application/json")
 	srw.buf.WriteTo(srw.ResponseWriter)
 }
 
