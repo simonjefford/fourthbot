@@ -85,14 +85,15 @@ func (s *SlackServer) RegisterResponders(res fourthbot.Registrar) {
 }
 
 func (s *SlackServer) handle(ctx context.Context, cmd *fourthbot.Command, srw *slackResponseWriter, finished chan bool) {
+	defer func() {
+		close(finished)
+	}()
 	err := s.robot.HandleCommand(ctx, cmd, srw)
 	if err != nil {
 		srw.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(srw, err.Error())
-		finished <- true
 		return
 	}
-	finished <- true
 }
 
 func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
