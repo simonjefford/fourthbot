@@ -33,3 +33,18 @@ will be properly tidied away on timeout.
 ** Throughout
 
 *** TODO Proper logging
+
+** Responders
+
+*** Rally
+
+**** TODO add new candidate story
+
+Params:
+- Swimlane
+- Size estimate
+
+**** TODO list stories
+
+Params:
+- Iteration
