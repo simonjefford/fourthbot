@@ -34,15 +34,15 @@ func (r *testResponder) Respond(ctx context.Context, cmd *fourthbot.Command, rw 
 	}
 }
 
-func runTest(t *testing.T, tr *testResponder, cmdstr string, form url.Values) *httptest.ResponseRecorder {
-	s := NewServer()
+func runTest(t *testing.T, tr *testResponder, cmdstr string, form url.Values, opts ...Option) (*httptest.ResponseRecorder, *SlackServer) {
+	s := NewServer(opts...)
 	s.RegisterResponder(cmdstr, tr)
 	form.Set("command", cmdstr)
 	r := httptest.NewRequest("POST", "/", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 	s.ServeHTTP(w, r)
-	return w
+	return w, s
 }
 
 func runTestWithRegistrar(t *testing.T, reg *registrar, cmdstr string, form url.Values) *httptest.ResponseRecorder {
@@ -61,7 +61,7 @@ func TestResponseFromResponder(t *testing.T) {
 		name:   "fooResponder",
 		status: 200,
 	}
-	w := runTest(t, tr, "/foo", map[string][]string{})
+	w, _ := runTest(t, tr, "/foo", map[string][]string{})
 	if w.Code != 200 {
 		t.Errorf("Expected 200 got %d (\"%s\" written to the response)", w.Code, w.Body.String())
 	}
@@ -79,7 +79,7 @@ func TestResponderStatusTreatedAsHTTPStatus(t *testing.T) {
 		name:   "fooResponder",
 		status: 400,
 	}
-	w := runTest(t, tr, "/foo", map[string][]string{})
+	w, _ := runTest(t, tr, "/foo", map[string][]string{})
 	if w.Code != 400 {
 		t.Errorf("Expected 400 got %d", w.Code)
 	}
@@ -176,7 +176,7 @@ func TestLongRequests(t *testing.T) {
 		close(done)
 	}))
 
-	res := runTest(t, tr, "/foo", map[string][]string{
+	res, _ := runTest(t, tr, "/foo", map[string][]string{
 		"response_url": []string{dummySlack.URL},
 	})
 	if g, e := res.Body.String(), "Working on it..."; g != e {
