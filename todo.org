@@ -48,3 +48,7 @@ Params:
 
 Params:
 - Iteration
+
+** TODO CI for this project
+
+(Ops jenkins?)
