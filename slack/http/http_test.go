@@ -159,7 +159,7 @@ func TestLongRequests(t *testing.T) {
 	tr := &testResponder{
 		name: "long running request",
 		f: func(ctx context.Context, cmd *fourthbot.Command, rw fourthbot.ResponseWriter) {
-			time.Sleep(4 * time.Second)
+			time.Sleep(200 * time.Millisecond)
 			fmt.Fprintf(rw, "{\"text\": \"Long running command finished.\"}")
 		},
 	}
@@ -178,7 +178,7 @@ func TestLongRequests(t *testing.T) {
 
 	res, _ := runTest(tr, "/foo", map[string][]string{
 		"response_url": []string{dummySlack.URL},
-	})
+	}, SyncResponseTimeout(time.Millisecond*100))
 	if g, e := res.Body.String(), "Working on it..."; g != e {
 		t.Errorf("Expected \"%s\", got \"%s\" in the response", e, g)
 	}
@@ -233,9 +233,9 @@ func TestPostResponseTimeout(t *testing.T) {
 		},
 	}
 	_, s := runTest(r, "/foo", map[string][]string{},
-		PostResponseTimeout(time.Second*1),
-		SyncResponseTimeout(time.Second*1))
-	time.Sleep(1 * time.Second)
+		PostResponseTimeout(time.Millisecond*100),
+		SyncResponseTimeout(time.Millisecond*100))
+	time.Sleep(time.Millisecond * 100)
 	if s.err == nil {
 		t.Error("expected a context error here")
 	}
