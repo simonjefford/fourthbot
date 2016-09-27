@@ -69,6 +69,9 @@ type SlackServer struct {
 	// maximum allowed time during which POSTs can be made
 	// to the response_url given by Slack
 	postResponseTimeout time.Duration
+
+	// for testing purposes
+	err error
 }
 
 // Option is a func that can configure a slackserver
@@ -180,6 +183,7 @@ func (s *SlackServer) waitForLongRunningOp(ctx context.Context, srw *slackRespon
 	defer cancel()
 	select {
 	case <-ctx.Done():
+		s.err = ctx.Err()
 		// op timed out
 		return
 	case <-finished:

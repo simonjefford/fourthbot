@@ -224,3 +224,19 @@ func TestOptions(t *testing.T) {
 		t.Errorf("Got %v expected %v for default sync response timeout.", g, e)
 	}
 }
+
+func TestPostResponseTimeout(t *testing.T) {
+	r := &testResponder{
+		name: "foo",
+		f: func(ctx context.Context, cmd *fourthbot.Command, rw fourthbot.ResponseWriter) {
+			time.Sleep(10 * time.Second)
+		},
+	}
+	_, s := runTest(t, r, "/foo", map[string][]string{},
+		PostResponseTimeout(time.Second*1),
+		SyncResponseTimeout(time.Second*1))
+	time.Sleep(1 * time.Second)
+	if s.err == nil {
+		t.Error("expected a context error here")
+	}
+}
