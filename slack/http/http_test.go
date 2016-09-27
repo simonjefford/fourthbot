@@ -34,7 +34,7 @@ func (r *testResponder) Respond(ctx context.Context, cmd *fourthbot.Command, rw 
 	}
 }
 
-func runTest(t *testing.T, tr *testResponder, cmdstr string, form url.Values, opts ...Option) (*httptest.ResponseRecorder, *SlackServer) {
+func runTest(tr *testResponder, cmdstr string, form url.Values, opts ...Option) (*httptest.ResponseRecorder, *SlackServer) {
 	s := NewServer(opts...)
 	s.RegisterResponder(cmdstr, tr)
 	form.Set("command", cmdstr)
@@ -45,7 +45,7 @@ func runTest(t *testing.T, tr *testResponder, cmdstr string, form url.Values, op
 	return w, s
 }
 
-func runTestWithRegistrar(t *testing.T, reg *registrar, cmdstr string, form url.Values) *httptest.ResponseRecorder {
+func runTestWithRegistrar(reg *registrar, cmdstr string, form url.Values) *httptest.ResponseRecorder {
 	s := NewServer()
 	s.RegisterResponders(reg)
 	form.Set("command", cmdstr)
@@ -61,7 +61,7 @@ func TestResponseFromResponder(t *testing.T) {
 		name:   "fooResponder",
 		status: 200,
 	}
-	w, _ := runTest(t, tr, "/foo", map[string][]string{})
+	w, _ := runTest(tr, "/foo", map[string][]string{})
 	if w.Code != 200 {
 		t.Errorf("Expected 200 got %d (\"%s\" written to the response)", w.Code, w.Body.String())
 	}
@@ -79,7 +79,7 @@ func TestResponderStatusTreatedAsHTTPStatus(t *testing.T) {
 		name:   "fooResponder",
 		status: 400,
 	}
-	w, _ := runTest(t, tr, "/foo", map[string][]string{})
+	w, _ := runTest(tr, "/foo", map[string][]string{})
 	if w.Code != 400 {
 		t.Errorf("Expected 400 got %d", w.Code)
 	}
@@ -91,7 +91,7 @@ func TestContextPropagation(t *testing.T) {
 		name: "fooResponder",
 	}
 	hook := "https://slack.com/hook"
-	runTest(t, tr, "/foo", map[string][]string{
+	runTest(tr, "/foo", map[string][]string{
 		"response_url": []string{hook},
 	})
 	if g, e := tr.responderContext.Value(0), hook; g != e {
@@ -112,7 +112,7 @@ func TestRegistrarHandling(t *testing.T) {
 		name: "fooResponder",
 	}
 	r := &registrar{tr}
-	runTestWithRegistrar(t, r, "/foo", map[string][]string{})
+	runTestWithRegistrar(r, "/foo", map[string][]string{})
 	if !tr.called {
 		t.Errorf("Expected responder to be called but was not")
 	}
@@ -176,7 +176,7 @@ func TestLongRequests(t *testing.T) {
 		close(done)
 	}))
 
-	res, _ := runTest(t, tr, "/foo", map[string][]string{
+	res, _ := runTest(tr, "/foo", map[string][]string{
 		"response_url": []string{dummySlack.URL},
 	})
 	if g, e := res.Body.String(), "Working on it..."; g != e {
@@ -232,7 +232,7 @@ func TestPostResponseTimeout(t *testing.T) {
 			time.Sleep(10 * time.Second)
 		},
 	}
-	_, s := runTest(t, r, "/foo", map[string][]string{},
+	_, s := runTest(r, "/foo", map[string][]string{},
 		PostResponseTimeout(time.Second*1),
 		SyncResponseTimeout(time.Second*1))
 	time.Sleep(1 * time.Second)
