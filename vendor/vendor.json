@@ -3,10 +3,22 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "yXrS4e4yxaRBu/MX+39X3cS4kbg=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "a283a10442df8dc09befd873fab202bf8a253d6a",
+			"revisionTime": "2016-07-16T02:56:31Z"
+		},
+		{
 			"checksumSHA1": "W8u2CU4ugn/coTPO0pLrcX6sbX8=",
 			"path": "github.com/chzyer/readline",
 			"revision": "31ab3eee0c7232dcb9abeb3876ca2739df53872d",
 			"revisionTime": "2016-09-04T13:05:21Z"
+		},
+		{
+			"checksumSHA1": "koBNYQryxAG8hyHBlpn8pcnSVdM=",
+			"path": "github.com/prometheus/common/log",
+			"revision": "dd586c1c5abb0be59e60f942c22af711a2008cb4",
+			"revisionTime": "2016-05-03T22:05:32Z"
 		},
 		{
 			"checksumSHA1": "2nQCIQ36WBJYnNvNUvLW7Pc4VIU=",
@@ -37,6 +49,12 @@
 			"path": "go4.org/wkfs",
 			"revision": "5af682b5815ea6e8f790ed27069dcb046d8a5cfe",
 			"revisionTime": "2016-09-08T19:58:05Z"
+		},
+		{
+			"checksumSHA1": "8fD/im5Kwvy3JgmxulDTambmE8w=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "30de6d19a3bd89a5f38ae4028e23aaa5582648af",
+			"revisionTime": "2016-09-07T05:59:14Z"
 		}
 	],
 	"rootPath": "github.com/simonjefford/fourthbot"
