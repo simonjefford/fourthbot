@@ -15,6 +15,8 @@ register commands with Slack as well.
 
 Will help with the above...
 
+*** TODO Chef cookbook for installing and configuring
+
 ** Jenkins responder
 
 *** TODO Use the configuration extensions above to register
