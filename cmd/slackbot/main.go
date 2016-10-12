@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"log"
 
+	"github.com/prometheus/common/log"
 	"github.com/simonjefford/fourthbot/mock/responders"
 	"github.com/simonjefford/fourthbot/responders/jenkins"
 	"github.com/simonjefford/fourthbot/slack/http"
@@ -44,6 +44,6 @@ func main() {
 		log.Fatal(err)
 	}
 	s.RegisterResponder("/echo", responders.Echo)
-	log.Println("Starting http server on", *listenAddr)
+	log.Infof("Starting server on %s", *listenAddr)
 	log.Fatal(s.ListenAndServe(*listenAddr))
 }

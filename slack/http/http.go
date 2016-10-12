@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/prometheus/common/log"
 	"github.com/simonjefford/fourthbot"
 	"github.com/simonjefford/fourthbot/slack"
 )
@@ -125,12 +126,14 @@ func (s *SlackServer) ListenAndServe(addr string) error {
 
 // RegisterResponder registers a Responder with the underlying Robot.
 func (s *SlackServer) RegisterResponder(c string, res fourthbot.Responder) {
+	log.Infof("Registering a responder for %s", c)
 	s.robot.RegisterResponder(c, res)
 }
 
 // RegisterResponders allows Server to use a Registrar to register one
 // or more Responders.
 func (s *SlackServer) RegisterResponders(res fourthbot.Registrar) {
+	log.Infof("Registering multiple responders")
 	res.RegisterResponders(s.robot)
 }
 
@@ -171,9 +174,11 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	go s.handle(ctx, c, srw, finished)
 	select {
 	case <-time.After(s.syncResponseTimeout):
+		log.Info("Ran out of time to provide direct response")
 		fmt.Fprint(srw.ResponseWriter, "Working on it...")
 		go s.waitForLongRunningOp(ctx, srw, cancel, finished)
 	case <-finished:
+		log.Info("Responding directly")
 		cancel()
 		srw.WriteResponseToHTTP()
 	}
@@ -187,6 +192,7 @@ func (s *SlackServer) waitForLongRunningOp(ctx context.Context, srw *slackRespon
 		// op timed out
 		return
 	case <-finished:
+		log.Info("Long running op finished")
 		// can write the response to `response_url`
 		url, ok := slack.ResponseURLFromContext(ctx)
 		if !ok {

@@ -3,8 +3,8 @@ package jenkins
 import (
 	"context"
 	"fmt"
-	"log"
 
+	"github.com/prometheus/common/log"
 	"github.com/simonjefford/fourthbot"
 	gojenk "github.com/yosida95/golang-jenkins"
 	"go4.org/jsonconfig"
@@ -15,11 +15,14 @@ type jenkinsServer struct {
 	addr     string
 	handlers map[string]fourthbot.ResponderFunc
 	client   *gojenk.Jenkins
+	logger   log.Logger
 }
 
 // New creates a new RegisteringResponder for interacting with a Jenkins server.
 func New(cfg jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
-	j := &jenkinsServer{}
+	j := &jenkinsServer{
+		logger: log.With("responder", "jenkins"),
+	}
 
 	err := j.applyConfig(cfg)
 	if err != nil {
@@ -52,6 +55,7 @@ func (j *jenkinsServer) applyConfig(cfg jsonconfig.Obj) error {
 
 func (j *jenkinsServer) RegisterResponders(r *fourthbot.Robot) {
 	for k := range j.handlers {
+		j.logger.Infof("Registering a handler for %s", k)
 		r.RegisterResponder(k, j)
 	}
 }
@@ -60,8 +64,6 @@ func (j *jenkinsServer) job(ctx context.Context, cmd *fourthbot.Command, w fourt
 	if j.client == nil {
 		j.client = gojenk.NewJenkins(j.auth, j.addr)
 	}
-
-	log.Printf("%+v\n", cmd)
 
 	if len(cmd.Args) == 0 {
 		w.WriteStatus(500)
@@ -74,7 +76,6 @@ func (j *jenkinsServer) job(ctx context.Context, cmd *fourthbot.Command, w fourt
 		fmt.Fprintf(w, "Error fetching job - %v\n", err)
 		return
 	}
-	log.Printf("%+v", job.LastSuccessfulBuild)
 	fmt.Fprintln(w, "Last successful build was", job.LastSuccessfulBuild.Url)
 }
 
