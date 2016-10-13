@@ -1,0 +1,11 @@
+{
+    "prod-engjenkins": {
+        "responder": "jenkins",
+        "apiKey": "key",
+        "host": "host",
+        "user": "user",
+        "commandMap": {
+            "jobdetails": "/prodeng-job"
+        }
+    }
+}

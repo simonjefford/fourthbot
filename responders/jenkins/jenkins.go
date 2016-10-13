@@ -16,6 +16,12 @@ type jenkinsServer struct {
 	handlers map[string]fourthbot.ResponderFunc
 	client   *gojenk.Jenkins
 	logger   log.Logger
+	commands jsonconfig.Obj
+}
+
+func (j *jenkinsServer) configureCommand(key, def string, f fourthbot.ResponderFunc) {
+	name := j.commands.OptionalString(key, def)
+	j.handlers[name] = f
 }
 
 // New creates a new RegisteringResponder for interacting with a Jenkins server.
@@ -29,9 +35,8 @@ func New(cfg jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
 		return nil, err
 	}
 
-	j.handlers = map[string]fourthbot.ResponderFunc{
-		"/jenkins-job": j.job,
-	}
+	j.handlers = make(map[string]fourthbot.ResponderFunc)
+	j.configureCommand("jobdetails", "/jenkins-job", j.job)
 
 	return j, nil
 }
@@ -40,6 +45,7 @@ func (j *jenkinsServer) applyConfig(cfg jsonconfig.Obj) error {
 	apiKey := cfg.RequiredString("apiKey")
 	j.addr = cfg.RequiredString("host")
 	user := cfg.RequiredString("user")
+	j.commands = cfg.OptionalObject("commandMap")
 	err := cfg.Validate()
 	if err != nil {
 		return err
