@@ -133,7 +133,6 @@ func (s *SlackServer) RegisterResponder(c string, res fourthbot.Responder) {
 // RegisterResponders allows Server to use a Registrar to register one
 // or more Responders.
 func (s *SlackServer) RegisterResponders(res fourthbot.Registrar) {
-	log.Infof("Registering multiple responders")
 	res.RegisterResponders(s.robot)
 }
 
