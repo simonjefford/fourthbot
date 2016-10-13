@@ -5,11 +5,11 @@
 
 *** TODO Frontend for configuring responders
 
-A responder may need to be configured to deal with multiple
-commands. For example /deploy-eparts-dev would need to be configured
-to trigger the Jenkins responder with a particular configuration. It
-would be nice (if possible with the Slack API) to automatically
-register commands with Slack as well.
+A responder may need to be configured to deal with multiple commands
+or built-in configurations. For example /deploy-eparts-dev would need
+to be configured to trigger the Jenkins responder with a particular
+configuration. It would be nice (if possible with the Slack API) to
+automatically register commands with Slack as well.
 
 *** TODO jsonconfig extension to read from Azure table storage
 
