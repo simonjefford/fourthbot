@@ -8,6 +8,7 @@ import (
 	"go4.org/jsonconfig"
 )
 
+// Run configures and starts up the bot server
 func Run(configFile, listenAddr string, initializers slack.InitializerTable) {
 	config, err := jsonconfig.ReadFile(configFile)
 	if err != nil {
