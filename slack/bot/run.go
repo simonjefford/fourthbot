@@ -1,4 +1,4 @@
-package run
+package bot
 
 import (
 	"github.com/prometheus/common/log"
@@ -8,7 +8,7 @@ import (
 	"go4.org/jsonconfig"
 )
 
-func Go(configFile, listenAddr string, initializers slack.InitializerTable) {
+func Run(configFile, listenAddr string, initializers slack.InitializerTable) {
 	config, err := jsonconfig.ReadFile(configFile)
 	if err != nil {
 		log.Fatal(err)

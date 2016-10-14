@@ -6,7 +6,7 @@ import (
 	"github.com/simonjefford/fourthbot"
 	"github.com/simonjefford/fourthbot/responders/jenkins"
 	"github.com/simonjefford/fourthbot/slack"
-	"github.com/simonjefford/fourthbot/slack/run"
+	"github.com/simonjefford/fourthbot/slack/bot"
 	"go4.org/jsonconfig"
 )
 
@@ -22,5 +22,5 @@ var (
 
 func main() {
 	flag.Parse()
-	run.Go(*configFile, *listenAddr, initFuncs)
+	bot.Run(*configFile, *listenAddr, initFuncs)
 }
