@@ -26,7 +26,7 @@ node('linux') {
         }
         def output = 'tests.out'
         def testResults = 'tests.xml'
-        sh "2>&1 go test ./... -v | tee ${outfile}"
+        sh "2>&1 go test ./... -v | tee ${output}"
         exit = sh(returnStatus: true, script: "go2xunit -fail -input ${output} -output ${testResults}")
         junit testResults
         if (exit != 0) {
