@@ -19,7 +19,7 @@ node('linux') {
         sh 'go get github.com/tebeka/go2xunit'
       }
     
-      stage('Build and Test') {
+      stage('Test') {
         def exit = sh(returnStatus: true, script: 'go build ./...')
         if (exit != 0) {
           error 'Build Failed'
@@ -31,6 +31,13 @@ node('linux') {
         junit testResults
         if (exit != 0) {
           error 'Tests Failed'
+        }
+      }
+
+      stage('Build slackbot') {
+        dir('cmd/slackbot') {
+          sh 'go build'
+          archiveArtifacts 'slackbot'
         }
       }
     }
