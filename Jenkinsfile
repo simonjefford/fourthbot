@@ -19,7 +19,7 @@ node('linux') {
         sh 'go get github.com/tebeka/go2xunit'
       }
     
-      stage('Test') {
+      stage('Build and Test') {
         def exit = sh(returnStatus: true, script: 'go build ./...')
         if (exit != 0) {
           error 'Build Failed'
@@ -29,11 +29,14 @@ node('linux') {
         sh "2>&1 go test ./... -v | tee ${outfile}"
         exit = sh(returnStatus: true, script: "go2xunit -fail -input ${output} -output ${testResults}")
         junit testResults
+        if (exit != 0) {
+          error 'Tests Failed'
+        }
       }
     }
     catch (e) {
       currentBuild.result = 'FAILED'
-      throw w
+      throw e
     }
   }
 }
