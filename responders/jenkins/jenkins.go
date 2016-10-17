@@ -102,7 +102,6 @@ func (j *jenkinsServer) job(ctx context.Context, cmd *fourthbot.Command, w fourt
 		fmt.Fprintf(w, "Error fetching job - %v\n", err)
 		return
 	}
-	log.Printf("%+v", job.LastSuccessfulBuild)
 	fmt.Fprintf(w, "{\"response_type\": \"in_channel\", \"text\": \"Last successful build was: %s\", \"attachments\": [{\"text\": \"id=%d\"}]}", job.LastSuccessfulBuild.Url, job.LastCompletedBuild.Number)
 }
 
