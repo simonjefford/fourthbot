@@ -13,13 +13,27 @@ node('linux') {
     env.PATH = "${goHome}/go/bin:${env.PATH}:${env.GOPATH}/bin"
     env.GOROOT = "${goHome}/go"
 
-    stage('Setup') {
-      sh 'go get github.com/tebeka/go2xunit'
-    }
+    try
+    {
+      stage('Setup') {
+        sh 'go get github.com/tebeka/go2xunit'
+      }
     
-    stage('Test') {
-      sh '2>&1 go test ./... -v | go2xunit -output tests.xml'
-      junit 'tests.xml'
+      stage('Test') {
+        def exit = sh(returnStatus: true, script: 'go build ./...')
+        if (exit != 0) {
+          error 'Build Failed'
+        }
+        def output = 'tests.out'
+        def testResults = 'tests.xml'
+        sh "2>&1 go test ./... -v | tee ${outfile}"
+        exit = sh(returnStatus: true, script: "go2xunit -fail -input ${output} -output ${testResults}")
+        junit testResults
+      }
+    }
+    catch (e) {
+      currentBuild.result = 'FAILED'
+      throw w
     }
   }
 }
