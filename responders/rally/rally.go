@@ -36,6 +36,7 @@ func New(cfg jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
 	}
 	r.handlers = make(map[string]fourthbot.ResponderFunc)
 	r.configureCommand("newcandidatestory", "/new-candidate-story", r.addCandidateStory)
+	r.configureCommand("help", "/rally-syntax-help", r.syntaxHelp)
 	return r, nil
 }
 
@@ -48,6 +49,9 @@ func (r *rallyServer) applyConfig(cfg jsonconfig.Obj) error {
 }
 
 func (r *rallyServer) addCandidateStory(ctx context.Context, cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
+}
+
+func (r *rallyServer) syntaxHelp(ctx context.Context, cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
 }
 
 func (r *rallyServer) RegisterResponders(robot *fourthbot.Robot) {
