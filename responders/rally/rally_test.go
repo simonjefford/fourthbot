@@ -24,3 +24,20 @@ func TestConfigWithDefaultCommands(t *testing.T) {
 		t.Errorf("addCandidateStory not registered under the expected default command name")
 	}
 }
+
+func TestConfigWithCustomCommands(t *testing.T) {
+	s, _ := New(map[string]interface{}{
+		"user":      "user",
+		"password":  "password",
+		"projectID": "projectID",
+		"commandMap": map[string]interface{}{
+			"newcandidatestory": "/custom-command",
+		},
+	})
+
+	r := s.(*rallyServer)
+
+	if g := r.handlers["/custom-command"]; g == nil {
+		t.Errorf("addCandidateStory not registered under the expected custom command name")
+	}
+}
