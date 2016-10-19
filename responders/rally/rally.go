@@ -35,7 +35,7 @@ func New(cfg jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
 		return nil, err
 	}
 	r.handlers = make(map[string]fourthbot.ResponderFunc)
-	r.configureCommand("newcandidatestory", "new-candidate-story", r.addCandidateStory)
+	r.configureCommand("newcandidatestory", "/new-candidate-story", r.addCandidateStory)
 	return r, nil
 }
 
