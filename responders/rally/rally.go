@@ -14,6 +14,12 @@ type rallyServer struct {
 	projectID string
 	handlers  map[string]fourthbot.ResponderFunc
 	client    *http.Client
+	commands  jsonconfig.Obj
+}
+
+func (r *rallyServer) configureCommand(key, def string, f fourthbot.ResponderFunc) {
+	name := r.commands.OptionalString(key, def)
+	r.handlers[name] = f
 }
 
 // TODO - there's a lot of similarity here with the Jenkins
@@ -28,9 +34,8 @@ func New(cfg jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
 	if err != nil {
 		return nil, err
 	}
-	r.handlers = map[string]fourthbot.ResponderFunc{
-		"/new-candidate-story": r.addCandidateStory,
-	}
+	r.handlers = make(map[string]fourthbot.ResponderFunc)
+	r.configureCommand("newcandidatestory", "new-candidate-story", r.addCandidateStory)
 	return r, nil
 }
 
@@ -38,6 +43,7 @@ func (r *rallyServer) applyConfig(cfg jsonconfig.Obj) error {
 	r.user = cfg.RequiredString("user")
 	r.pass = cfg.RequiredString("password")
 	r.projectID = cfg.RequiredString("projectID")
+	r.commands = cfg.OptionalObject("commandMap")
 	return cfg.Validate()
 }
 
