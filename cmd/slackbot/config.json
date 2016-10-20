@@ -10,5 +10,11 @@
     },
     "prod-engcovfefe": {
         "responder": "covfefe"
+    },
+    "prod-engrally": {
+        "responder": "rally",
+        "user": "",
+        "password": "",
+        "projectID": ""
     }
 }
