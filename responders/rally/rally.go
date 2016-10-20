@@ -2,6 +2,7 @@ package rally
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/simonjefford/fourthbot"
@@ -9,17 +10,25 @@ import (
 )
 
 type rallyServer struct {
-	user      string
-	pass      string
-	projectID string
-	handlers  map[string]fourthbot.ResponderFunc
-	client    *http.Client
-	commands  jsonconfig.Obj
+	user       string
+	pass       string
+	projectID  string
+	handlers   map[string]fourthbot.ResponderFunc
+	client     *http.Client
+	commands   jsonconfig.Obj
+	commandMap map[string]string
+	statusSent bool
+}
+
+var help = map[string]string{
+	"newcandidatestory": "[name swimlane candidatesprint]",
+	"help":              "no args",
 }
 
 func (r *rallyServer) configureCommand(key, def string, f fourthbot.ResponderFunc) {
 	name := r.commands.OptionalString(key, def)
-	r.handlers[name] = f
+	r.commandMap[key] = name
+	nr.handlers[name] = f
 }
 
 // TODO - there's a lot of similarity here with the Jenkins
@@ -35,6 +44,7 @@ func New(cfg jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
 		return nil, err
 	}
 	r.handlers = make(map[string]fourthbot.ResponderFunc)
+	r.commandMap = make(map[string]string)
 	r.configureCommand("newcandidatestory", "/new-candidate-story", r.addCandidateStory)
 	r.configureCommand("help", "/rally-syntax-help", r.syntaxHelp)
 	return r, nil
@@ -52,6 +62,9 @@ func (r *rallyServer) addCandidateStory(ctx context.Context, cmd *fourthbot.Comm
 }
 
 func (r *rallyServer) syntaxHelp(ctx context.Context, cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
+	for cmd, name := range r.commandMap {
+		fmt.Fprintf(w, "%s: %s\n", name, help[cmd])
+	}
 }
 
 func (r *rallyServer) RegisterResponders(robot *fourthbot.Robot) {
@@ -64,7 +77,11 @@ func (r *rallyServer) Respond(ctx context.Context, cmd *fourthbot.Command, w fou
 	h, ok := r.handlers[cmd.Name]
 	if !ok {
 		w.WriteStatus(500)
+		return
 	}
 
 	h(ctx, cmd, w)
+	if !r.statusSent {
+		w.WriteStatus(200)
+	}
 }
