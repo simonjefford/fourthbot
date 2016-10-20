@@ -15,6 +15,9 @@
         "responder": "rally",
         "user": "",
         "password": "",
-        "projectID": ""
+        "projectID": "",
+        "commandMap": {
+            "newcandidatestory": "/new-prodeng-story"
+        }
     }
 }
