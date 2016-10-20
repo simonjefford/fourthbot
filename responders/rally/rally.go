@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/prometheus/common/log"
 	"github.com/simonjefford/fourthbot"
 	"go4.org/jsonconfig"
 )
@@ -18,6 +19,7 @@ type rallyServer struct {
 	commands   jsonconfig.Obj
 	commandMap map[string]string
 	statusSent bool
+	logger     log.Logger
 }
 
 var help = map[string]string{
@@ -38,6 +40,7 @@ func (r *rallyServer) configureCommand(key, def string, f fourthbot.ResponderFun
 func New(cfg jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
 	r := &rallyServer{
 		client: &http.Client{},
+		logger: log.With("responder", "rally"),
 	}
 	err := r.applyConfig(cfg)
 	if err != nil {
@@ -69,6 +72,7 @@ func (r *rallyServer) syntaxHelp(ctx context.Context, cmd *fourthbot.Command, w 
 
 func (r *rallyServer) RegisterResponders(robot *fourthbot.Robot) {
 	for k := range r.handlers {
+		r.logger.Infof("Registering a handler for %s", k)
 		robot.RegisterResponder(k, r)
 	}
 }
