@@ -28,7 +28,7 @@ var help = map[string]string{
 func (r *rallyServer) configureCommand(key, def string, f fourthbot.ResponderFunc) {
 	name := r.commands.OptionalString(key, def)
 	r.commandMap[key] = name
-	nr.handlers[name] = f
+	r.handlers[name] = f
 }
 
 // TODO - there's a lot of similarity here with the Jenkins
