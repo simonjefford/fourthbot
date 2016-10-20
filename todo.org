@@ -51,6 +51,7 @@ Params:
 Params:
 - Iteration
 
-** TODO CI for this project
+** DONE CI for this project
+CLOSED: [2016-10-20 Thu 08:52]
 
 (Ops jenkins?)
