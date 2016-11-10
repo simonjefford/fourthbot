@@ -36,7 +36,7 @@ func (r *rallyServer) configureCommand(key, def string, f fourthbot.ResponderFun
 // TODO - there's a lot of similarity here with the Jenkins
 // responder. Can stuff be extracted?
 
-// New creates a new RegisteringResponder for interacting with a Jenkins server.
+// New creates a new RegisteringResponder for interacting with a Rally server.
 func New(cfg jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
 	r := &rallyServer{
 		client: &http.Client{},
