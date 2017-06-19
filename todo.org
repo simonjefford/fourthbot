@@ -32,6 +32,10 @@ will be properly tidied away on timeout.
 
 *** TODO Will need to be able to trigger a reconfiguration
 
+*** TODO validate all command maps in the configuration
+
+need to check for clashes
+
 ** Throughout
 
 *** TODO Proper logging
@@ -51,6 +55,7 @@ Params:
 Params:
 - Iteration
 
-** TODO CI for this project
+** DONE CI for this project
+CLOSED: [2016-10-20 Thu 08:52]
 
 (Ops jenkins?)
