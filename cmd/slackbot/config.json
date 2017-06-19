@@ -7,5 +7,8 @@
         "commandMap": {
             "jobdetails": "/prodeng-job"
         }
+    },
+    "prod-engcovfefe": {
+        "responder": "covfefe"
     }
 }

@@ -4,6 +4,7 @@ import (
 	"flag"
 
 	"github.com/simonjefford/fourthbot"
+	"github.com/simonjefford/fourthbot/responders/covfefe"
 	"github.com/simonjefford/fourthbot/responders/jenkins"
 	"github.com/simonjefford/fourthbot/slack"
 	"github.com/simonjefford/fourthbot/slack/bot"
@@ -16,6 +17,9 @@ var (
 	initFuncs  = slack.InitializerTable{
 		"jenkins": func(obj jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
 			return jenkins.New(obj)
+		},
+		"covfefe": func(obj jsonconfig.Obj) (fourthbot.RegisteringResponder, error) {
+			return covfefe.New(obj)
 		},
 	}
 )
