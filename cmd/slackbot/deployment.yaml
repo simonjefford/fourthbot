@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: slackbot
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: slackbot
+    spec:
+      containers:
+        - name: slackbot
+          image: prodengtest.azurecr.io/slackbot:v7
+      imagePullSecrets:
+        - name: prodengtest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: slackbot
+  labels:
+    run: slackbot
+spec:
+  selector:
+    app: slackbot
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: slackbot
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: 'true'
+spec:
+  rules:
+    - host: slackbot.sjjdev.com
+      http:
+        paths:
+          - backend:
+              serviceName: slackbot
+              servicePort: 8080
+            path: /
+  tls:
+    - hosts:
+        - "slackbot.sjjdev.com"
+      secretName: slackbot-tls
