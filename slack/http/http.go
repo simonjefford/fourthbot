@@ -163,7 +163,7 @@ func (s *SlackServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := &fourthbot.Command{}
-	ctx := slack.ContextWithSlackData(context.Background(), r.Form)
+	ctx := slack.ContextWithSlackData(r.Context(), r.Form)
 	c.Name = cmdstr
 	c.Args = strings.Split(textstr, " ")
 
