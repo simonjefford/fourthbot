@@ -10,6 +10,16 @@ import (
 	"go4.org/jsonconfig"
 )
 
+type response struct {
+	ResponseType string `json:"response_type"`
+	Text         string `json:"text"`
+	Attachments  []attachment
+}
+
+type attachment struct {
+	Text string `json:"text"`
+}
+
 type jenkinsServer struct {
 	auth     *gojenk.Auth
 	addr     string
@@ -66,6 +76,16 @@ func (j *jenkinsServer) RegisterResponders(r *fourthbot.Robot) {
 	}
 }
 
+func responseFromBuild(b gojenk.Build) *response {
+	return &response{
+		Text:         fmt.Sprintf("Last successbul build was : %s", b.Url),
+		ResponseType: "in_channel",
+		Attachments: []attachment{
+			attachment{Text: fmt.Sprintf("id=%d", b.Number)},
+		},
+	}
+}
+
 func (j *jenkinsServer) job(ctx context.Context, cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
 	if j.client == nil {
 		j.client = gojenk.NewJenkins(j.auth, j.addr)
@@ -82,7 +102,7 @@ func (j *jenkinsServer) job(ctx context.Context, cmd *fourthbot.Command, w fourt
 		fmt.Fprintf(w, "Error fetching job - %v\n", err)
 		return
 	}
-	fmt.Fprintln(w, "Last successful build was", job.LastSuccessfulBuild.Url)
+	fmt.Fprintf(w, "{\"response_type\": \"in_channel\", \"text\": \"Last successful build was: %s\", \"attachments\": [{\"text\": \"id=%d\"}]}", job.LastSuccessfulBuild.Url, job.LastCompletedBuild.Number)
 }
 
 func (j *jenkinsServer) Respond(ctx context.Context, cmd *fourthbot.Command, w fourthbot.ResponseWriter) {
